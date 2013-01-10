@@ -4,7 +4,11 @@
 			window.data_url = "http://crime.dailyemerald.com/incidents.json";
 			window.whitelist_key = "0AvYMScvV9vpcdC1lMWhvV2x4ZE5jRFF4NGJvcjh6bGc";
 			setup_map();
-			$.getJSON(data_url, get_whitelist);
+			$.ajax({
+				url : data_url,
+				dataType : "jsonp",
+				success : get_whitelist
+			});
 		});
 
 		var setup_map = function() {
@@ -31,10 +35,20 @@
 
 		var create_map = function(data, tabletop) {
 			window.whitelist = data;
+			console.log("whitelist:")
+			console.log(whitelist);
 			_.filter(incidents, function(incident) {
-				return parseInt(whitelist[1][incident.incident_description.replace(/(\s+|\W+)/ig, "")]);
-				// TODO may have to change this to return a boolean instead of 0 or 1
+				// really wish google spreadsheets had a boolean type
+				// TODO fix this, it keeps returning undefined
+				var b = whitelist[incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()];
+				console.log("wl: " + b);
+				if (b) {
+					return true;
+				} else {
+					return false;
+				}
 			});
+			console.log("Filtered incidents:");
 			console.log(incidents);
 			for (var incident in incidents) {
 				var marker = new google.maps.Marker({
