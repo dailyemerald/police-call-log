@@ -35,22 +35,12 @@
 
 		var create_map = function(data, tabletop) {
 			window.whitelist = data;
-			console.log("whitelist:")
-			console.log(whitelist);
-			_.filter(incidents, function(incident) {
-				// really wish google spreadsheets had a boolean type
-				// TODO fix this, it keeps returning undefined
-				var b = whitelist[incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()];
-				console.log("wl: " + b);
-				if (b) {
-					return true;
-				} else {
-					return false;
-				}
+			incidents = _.filter(incidents, function(incident) {
+				var val = whitelist[0][incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()];
+				// need the null and NaN check b/c for whatever reason it's pulling keys that don't exist in the spreadsheet. ex: "Hazardous Road Condition"
+				return !(val == null || isNaN(val) || val !== "1");
 			});
-			console.log("Filtered incidents:");
-			console.log(incidents);
-			for (var incident in incidents) {
+			_.each(incidents, function(incident, index, list){
 				var marker = new google.maps.Marker({
 					position : new google.maps.LatLng(incident.latitude, incident.longitude),
 					map : window.map,
@@ -60,8 +50,7 @@
 					window.infowindow.content = "<b>" + incident.incident_description + "</b><br>" + incident.received_raw + "<br>" + incident.location;
 					window.infowindow.open(window.map, this);
 				});
-			}
-
+			});
 		};
 
 	}())
