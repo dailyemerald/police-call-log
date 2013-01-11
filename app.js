@@ -1,7 +1,8 @@
+
 ( function() {
 
 		$(document).ready(function() {
-			window.data_url = "http://crime.dailyemerald.com/incidents.json";
+			//window.data_url = "http://crime.dailyemerald.com/incidents.json";
 			window.whitelist_key = "0AvYMScvV9vpcdC1lMWhvV2x4ZE5jRFF4NGJvcjh6bGc";
 			setup_map();
 			$.ajax({
@@ -13,7 +14,7 @@
 
 		var setup_map = function() {
 			var mapOptions = {
-				zoom : 14,
+				zoom : 16,
 				center : new google.maps.LatLng(44.042748, -123.07668),
 				mapTypeId : google.maps.MapTypeId.ROADMAP
 			};
@@ -35,12 +36,17 @@
 
 		var create_map = function(data, tabletop) {
 			window.whitelist = data;
+			console.log(data);
+			/* TODO fix this filtering with the new speadsheet structure
 			incidents = _.filter(incidents, function(incident) {
-				var val = whitelist[0][incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()];
+				
+				var val = whitelist[incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()][1];
+				console.log("key: " + incident.incident_description+ " val: " + val)
 				// need the null and NaN check b/c for whatever reason it's pulling keys that don't exist in the spreadsheet. ex: "Hazardous Road Condition"
-				return !(val == null || isNaN(val) || val !== "1");
+				return val === "1";
 			});
-			_.each(incidents, function(incident, index, list){
+			*/
+			_.each(incidents, function(incident, index, list) {
 				var marker = new google.maps.Marker({
 					position : new google.maps.LatLng(incident.latitude, incident.longitude),
 					map : window.map,
@@ -53,4 +59,4 @@
 			});
 		};
 
-	}())
+	}());
