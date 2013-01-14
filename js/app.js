@@ -34,7 +34,6 @@
 				left : 'auto'
 			};
 			window.spinner = new Spinner(opts).spin(document.getElementById("content"));
-			console.log("spinner", spinner);
 		};
 		
 		var setup_map = function() {
@@ -51,8 +50,6 @@
 
 		var get_whitelist = function(data) {
 			window.incidents = data;
-			console.log("incidents");
-			console.log(incidents);
 			Tabletop.init({
 				key : whitelist_key,
 				callback : create_map,
@@ -62,8 +59,6 @@
 
 		var create_map = function(data, tabletop) {
 			window.whitelist = data;
-			console.log("whitelist:")
-			console.log(whitelist);
 			incidents = _.filter(incidents, function(incident) {
 				return whitelist[0][incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()] === "1";
 			});
