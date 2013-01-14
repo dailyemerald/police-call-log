@@ -1,8 +1,11 @@
-
 ( function() {
 
 		$(document).ready(function() {
-			//window.data_url = "http://crime.dailyemerald.com/incidents.json";
+			$("#content").height($(window).height());
+			start_spinner();
+			window.data_url = "http://crime.dailyemerald.com/incidents.json";
+
+			//window.data_url = "crimes.json";
 			window.whitelist_key = "0AvYMScvV9vpcdC1lMWhvV2x4ZE5jRFF4NGJvcjh6bGc";
 			setup_map();
 			$.ajax({
@@ -12,6 +15,28 @@
 			});
 		});
 
+		var start_spinner = function() {
+			var opts = {
+				lines : 13,
+				length : 7,
+				width : 4,
+				radius : 10,
+				corners : 1,
+				rotate : 0,
+				color : '#000',
+				speed : 1,
+				trail : 60,
+				shadow : false,
+				hwaccel : false,
+				className : 'spinner',
+				zIndex : 2e9,
+				top : 'auto',
+				left : 'auto'
+			};
+			window.spinner = new Spinner(opts).spin(document.getElementById("content"));
+			console.log("spinner", spinner);
+		};
+		
 		var setup_map = function() {
 			var mapOptions = {
 				zoom : 16,
@@ -26,6 +51,7 @@
 
 		var get_whitelist = function(data) {
 			window.incidents = data;
+			console.log("incidents");
 			console.log(incidents);
 			Tabletop.init({
 				key : whitelist_key,
@@ -36,16 +62,12 @@
 
 		var create_map = function(data, tabletop) {
 			window.whitelist = data;
-			console.log(data);
-			/* TODO fix this filtering with the new speadsheet structure
+			console.log("whitelist:")
+			console.log(whitelist);
 			incidents = _.filter(incidents, function(incident) {
-				
-				var val = whitelist[incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()][1];
-				console.log("key: " + incident.incident_description+ " val: " + val)
-				// need the null and NaN check b/c for whatever reason it's pulling keys that don't exist in the spreadsheet. ex: "Hazardous Road Condition"
-				return val === "1";
+				return whitelist[0][incident.incident_description.replace(/(\s+|\W+)/ig, "").toLowerCase()] === "1";
 			});
-			*/
+			console.log(incidents.length)
 			_.each(incidents, function(incident, index, list) {
 				var marker = new google.maps.Marker({
 					position : new google.maps.LatLng(incident.latitude, incident.longitude),
@@ -53,10 +75,17 @@
 					title : incident.incident_description
 				});
 				google.maps.event.addListener(marker, 'click', function() {
-					window.infowindow.content = "<b>" + incident.incident_description + "</b><br>" + incident.received_raw + "<br>" + incident.location;
+					window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
 					window.infowindow.open(window.map, this);
 				});
 			});
+			create_stats();
+		};
+		
+		var create_stats = function(){
+			// TODO
+			
+			spinner.stop();
 		};
 
 	}());

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>News App Test</title>
+		<link href="css/" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="container" >
+			<div class="row" >
+				<div class="span12 offset1" >
+					<iframe src="index.html" style="width:inherit" ></iframe>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
+	<script src="js/bootstrap.min.js" ></script>
+	<script>
+		$(document).ready(function(){
+			$("iframe").height($(window).height());
+		});
+	</script>
+</html>
