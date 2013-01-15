@@ -7,13 +7,19 @@
 	</head>
 	<body>
 		<div id="content" >
-				<div id="map" ></div>
-				<div id="stats" >
-					<h3>Statistics</h3>
-					<ul id="stats-list" ></ul>
-				</div>
+			<div id="map" ></div>
+			<div id="stats" >
+				<ul id="stats-list" ></ul>
+			</div>
 		</div>
 	</body>
+	<script type="text/template" id="stat-template" >
+		<div class="stat" >
+			<div class="stat-description" ><%= description %></div>
+			<div class="stat-percentage" ><%= percentage %>%</div>
+			<div class="stat-time" ><%= hour %></div>
+		</div>
+	</script>
 	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" ></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js" ></script>
