@@ -9,16 +9,20 @@
 		<div id="content" >
 			<div id="map" ></div>
 			<div id="stats" >
-				<ul id="stats-list" ></ul>
+				<table id="stats-list" border="0" ></table>
 			</div>
 		</div>
 	</body>
 	<script type="text/template" id="stat-template" >
-		<div class="stat" >
-			<div class="stat-description" ><%= description %></div>
-			<div class="stat-percentage" ><%= percentage %>%</div>
-			<div class="stat-time" ><%= hour %></div>
-		</div>
+		<td><div class="stat-description" ><%= description %></div></td>
+		<td><div class="stat-percentage" ><%= percentage %>%</div></td>
+		<td><div class="stat-displayed-num" ><%= num_displayed %></div></td>
+		<td><div class="stat-total-num" ><%= num_total %></div></td>
+	</script>
+	<script type="text/template" id="stat-header-template" >
+		<td><div id="stat-total-shown" ><%= total_shown %></div></td>
+		<td><div id="stat-total" ><%= total %></div></td>
+		<td><div id="stat-shown-percentage" ><%= shown_percentage %></div></td>
 	</script>
 	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" ></script>

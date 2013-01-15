@@ -1,5 +1,14 @@
 
-
+/*
+ * 3 columns, desc, percentage on screen, raw number on screen, total number
+ * get rid of scrolling
+ * top: # on screen / total and percentage
+ * only show top 10 crime categories (hide zeros)
+ * times: 0-24, 1-7 days, 7+ days
+ * 
+ * add polyfills (red, blue, grey)
+ * 
+ */ 
 body{
 	margin: 0;
 }
@@ -13,17 +22,16 @@ ul{
 li{
 	width: 100%;
 	padding: 0;
-	margin-right: 0.5em;
 }
 
 #content{
-	height: 100%;
-	width: 100%;
+	width: 1100px;
+	height: 700px;
 	overflow: hidden;
 }
 
 #map{
-	width: 80%;
+	width: 880px;
 	height: 100%;
 	margin: 0;
 	float: left;
@@ -31,28 +39,18 @@ li{
 
 #stats{
 	float: right;
-	width: 20%;
+	width: 220px;
 	height: 100%;
 	background-color: #F5F5F5;
 	margin: 0;
 }
 
 .stat{
-	/* TODO pretty this up */
 	padding: 0.4em;	
-	border-bottom: solid #333;
 	color: #333;
 	font-weight: 600;
-	font-size: large;
 	width: 100%;
-	margin-right: 0.15em;
 }
 
-.stat div{
-	width: 100%;
-	padding: 0.4em;
-}
 
-.stat:hover{
-	background: #EEE;
-}
+
