@@ -50,26 +50,15 @@
 		google.maps.event.addListener(map, "center_changed", function() {
 			refresh();
 		});
-		window.circle_opts = {
-			strokeOpacity : 0.7,
-			fillOpacity : 0.7,
-			map : window.map,
-			radius : 4
-		};
-		window.colors = {
-			red : "#f9070d",
-			yellow : "#edf006",
-			light_gray : "#969696",
-			dark_gray : "#646464",
-			black : "#000000"
-		};
-		window.highlighted_opts = {
-			strokeOpacity : 0.8,
-			fillOpacity : 0.8,
-			radius : 4,
-			fillColor : colors.black,
-			strokeColor : colors.black
-		};
+		window.icons = {
+			blue: "http://s3.amazonaws.com/emg-data/police-call-log/img/blue-icon.png",
+			green: "http://s3.amazonaws.com/emg-data/police-call-log/img/green-icon.png",
+			black: "http://s3.amazonaws.com/emg-data/police-call-log/img/black-icon.png",
+			yellow: "http://s3.amazonaws.com/emg-data/police-call-log/img/yellow-icon.png",
+			light_gray: "http://s3.amazonaws.com/emg-data/police-call-log/img/light-gray-icon.png",
+			dark_gray: "http://s3.amazonaws.com/emg-data/police-call-log/img/dark-gray-icon.png",
+			red: "http://s3.amazonaws.com/emg-data/police-call-log/img/red-icon.png"
+		}
 	};
 	
 	var get_whitelist = function(data) {
@@ -91,33 +80,22 @@
 		_.each(incidents, function(incident, index, list) {
 			// group the incident descriptions and gather summary stats on each category
 			incident.recency = get_recency(new Date(incident.received_raw));
-			incident.circle_opts = circle_opts;
+			incident.marker = new google.maps.Marker({
+					position : new google.maps.LatLng(incident.latitude, incident.longitude),
+					title : incident.incident_description,
+					map : window.map
+			});
+			google.maps.event.addListener(incident.marker, "click", function() {
+				window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
+				window.infowindow.open(window.map, this);
+			});
 			if(incident.recency == 0) {
-				incident.circle_opts.fillColor = colors.red;
-				incident.circle_opts.strokeColor = colors.red;
+				incident.marker.setIcon(icons.red);
 			} else if(incident.recency == 1) {
-				incident.circle_opts.fillColor = colors.yellow;
-				incident.circle_opts.strokeColor = colors.yellow;
+				incident.marker.setIcon(icons.yellow);
 			} else {
-				incident.circle_opts.fillColor = colors.light_gray;
-				incident.circle_opts.strokeColor = colors.light_gray;
+				incident.marker.setIcon(icons.light_gray);
 			}
-			incident.circle_opts.center = new google.maps.LatLng(incident.latitude, incident.longitude);
-			incident.circle_opts.title = incident.incident_description;
-			incident.circle = new google.maps.Circle(incident.circle_opts);
-			incident.highlighted = false;
-			incident.highlighted_opts = highlighted_opts;
-			incident.highlighted_opts.center = new google.maps.LatLng(incident.latitude, incident.longitude);
-			incident.highlighted_opts.title = incident.incident_description;
-			incident.highlighted_circle = new google.maps.Circle(incident.hightlighted_opts);
-			google.maps.event.addListener(incident.circle, "click", function() {
-				window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
-				window.infowindow.open(window.map, this);
-			});
-			google.maps.event.addListener(incident.highlighted_circle, "click", function() {
-				window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
-				window.infowindow.open(window.map, this);
-			});
 			if(all_categories[incident.incident_description]) {
 				var category = all_categories[incident.incident_description];
 				category.incidents.push(incident);
@@ -203,8 +181,7 @@
 			}
 			$curr.mouseenter(toggle_highlights);
 			$curr.mouseleave(toggle_highlights);
-			$list.prepend($curr);
-			// underscore sorts ascending
+			$list.prepend($curr); // underscore sorts ascending
 		});
 		// create summary stats for map viewport
 		var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Percent Shown</td><td>Calls Shown</td><td>Total Calls</td></tr>");
@@ -232,13 +209,17 @@
 		_.each(hovered.displayed, function(incident) {
 			if(incident.highlighted){
 				// back to normal
-				incident.highlighted_circle.setMap(null);
-				incident.circle.setMap(map);
+				if(incident.recency == 0){
+					incident.marker.setIcon(icons.red);
+				}else if(incident.recency == 1){
+					incident.marker.setIcon(icons.yellow);
+				}else{
+					incident.marker.setIcon(icons.light_gray);
+				}
 				incident.highlighted = false;
 			}else{
 				// highlight
-				incident.circle.setMap(null);
-				incident.highlighted_circle.setMap(map);
+				incident.marker.setIcon(icons.green);
 				incident.highlighted = true;
 			}
 
