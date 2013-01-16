@@ -50,14 +50,57 @@
 			google.maps.event.addListener(map, "center_changed", function() {
 				refresh();
 			});
-			window.icons = {
-				blue : "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png",
-				green : "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
-				pink : "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png",
-				purple : "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
-				orange : "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png",
-				yellow : "http://www.google.com/intl/en_us/mapfiles/ms/micons/yellow-dot.png"
-			};
+			// TODO
+			window.circle_options = {
+				red : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				},
+				blue : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				},
+				green : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				},
+				dark_gray : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				},
+				light_gray : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				},
+				yellow : {
+					fillColor : "#FF0000",
+					strokeColor : "#FF0000",
+					strokeOpacity : 0.75,
+					fillOpacity : 0.75,
+					map : window.map,
+					radius : 3
+				}
+			}
 		};
 
 		var get_whitelist = function(data) {
@@ -81,23 +124,23 @@
 				var marker = new google.maps.Marker({
 					position : new google.maps.LatLng(incident.latitude, incident.longitude),
 					title : incident.incident_description,
-					map : window.map
 				});
 				google.maps.event.addListener(marker, "click", function() {
 					window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
 					window.infowindow.open(window.map, this);
 				});
-
+				incident.marker = marker;
 				incident.recency = get_recency(new Date(incident.received_raw));
 				// 0 = < 1 day, 1 = 1-7 days, 2 = >7 days
 				if (incident.recency == 0) {
-					//marker.setIcon(icons.blue);
+					incident.circle_opts = circle_options.red;
 				} else if (incident.recency == 1) {
-					marker.setIcon(icons.yellow);
+					incident.circle_opts = circle_options.yellow;
 				} else {
-					marker.setIcon(icons.blue);
+					incident.circle_opts = circle_options.light_gray;
 				}
-				incident.marker = marker;
+				incident.circle_opts.center = incident.marker.position;
+				incident.circle = new google.maps.Circle(incident.circle_opts);
 				if (all_categories[incident.incident_description]) {
 					var category = all_categories[incident.incident_description];
 					category.incidents.push(incident);
@@ -107,11 +150,12 @@
 						description : incident.incident_description, // stored again to avoid rewriting sortBy later on, which doesn't preserve the keys
 						incidents : [incident],
 						percentage : 1 / incidents.length,
-						id : Math.random() * 100000000 // should be more than enough for between 30 and 50 categories
+						id : Math.floor(Math.random() * 1000000000) // should be more than enough for between 30 and 50 categories
 					};
 				}
 			});
-			window.incidents = null; // could potentially free up quite a bit of memory after this has time to gather more data
+			window.incidents = null;
+			// could potentially free up quite a bit of memory after this has time to gather more data
 			refresh();
 			spinner.stop();
 		};
@@ -169,7 +213,7 @@
 			var num_displayed = 0;
 			_.each(categories, function(category, index, list) {
 				num_displayed += category.displayed.length;
-				var $curr = $("<tr class='stat' id='" + category.id + "' >");
+				var $curr = $("<tr class='stat rounded' id='" + category.id + "' >");
 				var stat = _.template($("#stat-template").html(), {
 					description : category.description,
 					percentage : (category.displayed_percentage * 100).toFixed(1),
@@ -177,6 +221,11 @@
 					num_total : category.incidents.length,
 				});
 				$curr.html(stat);
+				if (index % 2 == 1) {
+					$curr.addClass("odd");
+				} else {
+					$curr.addClass("even");
+				}
 				$curr.mouseenter(toggle_animation);
 				$curr.mouseleave(toggle_animation);
 				$list.prepend($curr);
@@ -189,34 +238,31 @@
 				total : total_incidents,
 				shown_percentage : (num_displayed / total_incidents * 100).toFixed(1)
 			});
-			$list.prepend($("<tr id='totals' >").html(summary_stats));
+			$list.prepend($("<tr id='totals' class='stat rounded' >").html(summary_stats));
 			$list.prepend($stats_header);
-			while ($list.find("tr").length > 15) {
+			while ($list.find("tr").length > 20) {
 				$list.find("tr").last().remove();
 			}
-			 
+
 		};
 
 		var toggle_animation = function() {
 			console.log("toggle animation");
 			var id = $(this).attr("id");
 			var hovered = false;
-			_.each(all_categories, function(category){
-				if(category.id == id){
+			_.each(all_categories, function(category) {
+				if (category.id == id) {
 					hovered = category;
-				}		
+				}
 			});
-			if(!hovered){
+			if (!hovered) {
 				console.log("error finding category");
 				return;
 			}
 			_.each(hovered.displayed, function(incident) {
 				console.log("incident", incident);
-				if (incident.marker.getAnimation() != null) {
-					incident.marker.setAnimation(null);
-				} else {
-					incident.marker.setAnimation(google.maps.Animation.BOUNCE);
-				}
+				// TODO
+				
 			});
 		};
 
