@@ -31,7 +31,7 @@
 				top : 'auto',
 				left : 'auto'
 			};
-			window.spinner = new Spinner(opts).spin(document.getElementById("content"));
+			window.spinner = new Spinner(opts).spin(document.getElementById("stats"));
 		};
 
 		var setup_map = function() {
