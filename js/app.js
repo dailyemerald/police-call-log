@@ -51,11 +51,11 @@
 				refresh();
 			});
 			window.icons = {
-				blue: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png" }),
-				green: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png" }),
-				pink: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png" }),
-				purple: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png" }),
-				orange: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png" }) 
+				blue: "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png",
+				green: "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
+				pink: "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png",
+				purple: "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
+				orange: "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png" 
 			};
 		};
 
@@ -94,7 +94,7 @@
 				}else if(incident.recency == 1){
 					marker.setIcon(icons.pink);
 				}else{
-					marker.setIcon(icons.purple);
+					marker.setIcon(icons.orange);
 				}
 				incident.marker = marker;
 				if(all_categories[incident.incident_description]){
