@@ -31,7 +31,7 @@
 				top : 'auto',
 				left : 'auto'
 			};
-			window.spinner = new Spinner(opts).spin(document.getElementById("map"));
+			window.spinner = new Spinner(opts).spin(document.getElementById("content"));
 		};
 		
 		var setup_map = function() {
@@ -50,6 +50,13 @@
 			google.maps.event.addListener(map, "center_changed", function(){
 				refresh();
 			});
+			window.icons = {
+				blue: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png" }),
+				green: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png" }),
+				pink: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png" }),
+				purple: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png" }),
+				orange: new google.maps.MarkerImage({ url: "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png" }) 
+			};
 		};
 
 		var get_whitelist = function(data) {
@@ -79,15 +86,21 @@
 					window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
 					window.infowindow.open(window.map, this);
 				});
-				// TODO add polyfills
 				
-				incident.marker = marker;
 				incident.recency = get_recency(new Date(incident.received_raw)); // 0 = < 1 day, 1 = 1-7 days, 2 = >7 days
+				console.log("incident.recency" + incident.recency);
+				if(incident.recency == 0){
+					marker.setIcon(icons.blue);
+				}else if(incident.recency == 1){
+					marker.setIcon(icons.pink);
+				}else{
+					marker.setIcon(icons.purple);
+				}
+				incident.marker = marker;
 				if(all_categories[incident.incident_description]){
 					var category = all_categories[incident.incident_description];
 					category.incidents.push(incident);
 					category.percentage = category.incidents.length / incidents.length;
-					
 				}else{
 					all_categories[incident.incident_description] = {
 						description: incident.incident_description, // stored again to avoid rewriting sortBy later on, which doesn't preserve the keys
@@ -122,7 +135,7 @@
 		
 		// filters incidents from @categories by the current map boundaries
 		var filter_incidents = function(categories){
-			var displayed = [];
+			var displayed = [], num_displayed = 0;
 			var top = map.getBounds().getNorthEast().lat(),
 				right = map.getBounds().getNorthEast().lng(),
 				bottom = map.getBounds().getSouthWest().lat(),
@@ -139,22 +152,27 @@
 						}
 				});
 				if(category.displayed.length > 0){
+					num_displayed += category.displayed.length;
 					displayed.push(category);
 				}
+			});
+			_.each(displayed, function(category){
+				category.displayed_percentage = category.displayed.length / num_displayed;
 			});
 			return displayed;
 		};
 			
 		var show_stats = function(categories){
+			// get summary stats on all displayed incidents
 			categories = _.sortBy(categories, function(category){
 				return category.displayed_percentage;
 			});
 			var $list = $("#stats-list"), sum = 0;
 			$list.html("");
+			var num_displayed = 0;
 			_.each(categories, function(category, index, list){
+				num_displayed += category.displayed.length;
 				var $curr = $("<tr class='stat' >");
-				sum += category.displayed.length;
-				category.displayed_percentage = category.displayed.length / category.incidents.length;				
 				var stat = _.template($("#stat-template").html(), {
 					description: category.description,
 					percentage: (category.displayed_percentage * 100).toFixed(1),
@@ -166,13 +184,13 @@
 			});
 			// create summary stats for map viewport
 			var stat_header = _.template($("#stat-header-template").html(), {
-				total_shown: sum,
+				total_shown: num_displayed,
 				total: total_incidents,
-				shown_percentage: (sum / total_incidents * 100).toFixed(1)
+				shown_percentage: (num_displayed / total_incidents * 100).toFixed(1)
 			});
 			$list.prepend($("<tr class='stat' >").html(stat_header));
 			while($list.children().length > 10){
-				$list.children(":last-child").remove();
+				$list.children("tr:last-child").remove();
 			}
 		};
 
