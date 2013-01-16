@@ -33,7 +33,7 @@
 			};
 			window.spinner = new Spinner(opts).spin(document.getElementById("content"));
 		};
-		
+
 		var setup_map = function() {
 			var mapOptions = {
 				zoom : 16,
@@ -44,18 +44,19 @@
 			window.infowindow = new google.maps.InfoWindow({
 				content : "" // "Violent crimes around University of Oregon campus"?
 			});
-			google.maps.event.addListener(map, "zoom_changed", function(){
+			google.maps.event.addListener(map, "zoom_changed", function() {
 				refresh();
 			});
-			google.maps.event.addListener(map, "center_changed", function(){
+			google.maps.event.addListener(map, "center_changed", function() {
 				refresh();
 			});
 			window.icons = {
-				blue: "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png",
-				green: "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
-				pink: "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png",
-				purple: "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
-				orange: "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png" 
+				blue : "http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png",
+				green : "http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
+				pink : "http://www.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png",
+				purple : "http://www.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png",
+				orange : "http://www.google.com/intl/en_us/mapfiles/ms/micons/orange-dot.png",
+				yellow : "http://www.google.com/intl/en_us/mapfiles/ms/micons/yellow-dot.png"
 			};
 		};
 
@@ -80,32 +81,33 @@
 				var marker = new google.maps.Marker({
 					position : new google.maps.LatLng(incident.latitude, incident.longitude),
 					title : incident.incident_description,
-					map: window.map
+					map : window.map
 				});
 				google.maps.event.addListener(marker, "click", function() {
 					window.infowindow.content = "<strong>" + incident.incident_description + "</strong><br>" + incident.received_raw + "<br>" + incident.location;
 					window.infowindow.open(window.map, this);
 				});
-				
-				incident.recency = get_recency(new Date(incident.received_raw)); // 0 = < 1 day, 1 = 1-7 days, 2 = >7 days
-				console.log("incident.recency" + incident.recency);
-				if(incident.recency == 0){
+
+				incident.recency = get_recency(new Date(incident.received_raw));
+				// 0 = < 1 day, 1 = 1-7 days, 2 = >7 days
+				if (incident.recency == 0) {
+					//marker.setIcon(icons.blue);
+				} else if (incident.recency == 1) {
+					marker.setIcon(icons.yellow);
+				} else {
 					marker.setIcon(icons.blue);
-				}else if(incident.recency == 1){
-					marker.setIcon(icons.pink);
-				}else{
-					marker.setIcon(icons.orange);
 				}
 				incident.marker = marker;
-				if(all_categories[incident.incident_description]){
+				if (all_categories[incident.incident_description]) {
 					var category = all_categories[incident.incident_description];
 					category.incidents.push(incident);
 					category.percentage = category.incidents.length / incidents.length;
-				}else{
+				} else {
 					all_categories[incident.incident_description] = {
-						description: incident.incident_description, // stored again to avoid rewriting sortBy later on, which doesn't preserve the keys
-						incidents: [incident],
-						percentage: 1 / incidents.length,
+						description : incident.incident_description, // stored again to avoid rewriting sortBy later on, which doesn't preserve the keys
+						incidents : [incident],
+						percentage : 1 / incidents.length,
+						id : Math.random() * 100000000 // should be more than enough for between 30 and 50 categories
 					};
 				}
 			});
@@ -113,85 +115,109 @@
 			refresh();
 			spinner.stop();
 		};
-		
-		var refresh = function(){
+
+		var refresh = function() {
 			show_stats(filter_incidents(all_categories));
 		};
-		
-		var get_recency = function(date){
+
+		var get_recency = function(date) {
 			var curr = new Date();
-			var msec = 86400000; // msec / day
-			if(curr - date.getTime() < msec){
+			var day = 86400000;
+			// msec in a day
+			if (curr - date.getTime() < day) {
 				// < 1 day
 				return 0;
-			}else if(curr - date.getTime() > 7 * msec){
+			} else if (curr - date.getTime() < 7 * day) {
 				// 1-7 days
 				return 1;
-			}else{
+			} else {
 				// > 7 days
 				return 2;
 			}
 		};
-		
+
 		// filters incidents from @categories by the current map boundaries
-		var filter_incidents = function(categories){
+		var filter_incidents = function(categories) {
 			var displayed = [], num_displayed = 0;
-			var top = map.getBounds().getNorthEast().lat(),
-				right = map.getBounds().getNorthEast().lng(),
-				bottom = map.getBounds().getSouthWest().lat(),
-				left = map.getBounds().getSouthWest().lng();
-			_.each(categories, function(category){
+			var top = map.getBounds().getNorthEast().lat(), right = map.getBounds().getNorthEast().lng(), bottom = map.getBounds().getSouthWest().lat(), left = map.getBounds().getSouthWest().lng();
+			_.each(categories, function(category) {
 				category.displayed = [];
-				_.each(category.incidents, function(incident){
+				_.each(category.incidents, function(incident) {
 					// lat > 0, long < 0
-					if(incident.latitude < top
-						&& incident.latitude > bottom
-						&& incident.longitude < right
-						&& incident.longitude > left){
-							category.displayed.push(incident);
-						}
+					if (incident.latitude < top && incident.latitude > bottom && incident.longitude < right && incident.longitude > left) {
+						category.displayed.push(incident);
+					}
 				});
-				if(category.displayed.length > 0){
+				if (category.displayed.length > 0) {
 					num_displayed += category.displayed.length;
 					displayed.push(category);
 				}
 			});
-			_.each(displayed, function(category){
+			_.each(displayed, function(category) {
 				category.displayed_percentage = category.displayed.length / num_displayed;
 			});
 			return displayed;
 		};
-			
-		var show_stats = function(categories){
+
+		var show_stats = function(categories) {
 			// get summary stats on all displayed incidents
-			categories = _.sortBy(categories, function(category){
+			categories = _.sortBy(categories, function(category) {
 				return category.displayed_percentage;
 			});
 			var $list = $("#stats-list"), sum = 0;
 			$list.html("");
 			var num_displayed = 0;
-			_.each(categories, function(category, index, list){
+			_.each(categories, function(category, index, list) {
 				num_displayed += category.displayed.length;
-				var $curr = $("<tr class='stat' >");
+				var $curr = $("<tr class='stat' id='" + category.id + "' >");
 				var stat = _.template($("#stat-template").html(), {
-					description: category.description,
-					percentage: (category.displayed_percentage * 100).toFixed(1),
-					num_displayed: category.displayed.length,
-					num_total: category.incidents.length
+					description : category.description,
+					percentage : (category.displayed_percentage * 100).toFixed(1),
+					num_displayed : category.displayed.length,
+					num_total : category.incidents.length,
 				});
 				$curr.html(stat);
-				$list.prepend($curr); // underscore sorts ascending
+				$curr.mouseenter(toggle_animation);
+				$curr.mouseleave(toggle_animation);
+				$list.prepend($curr);
+				// underscore sorts ascending
 			});
 			// create summary stats for map viewport
-			var stat_header = _.template($("#stat-header-template").html(), {
-				total_shown: num_displayed,
-				total: total_incidents,
-				shown_percentage: (num_displayed / total_incidents * 100).toFixed(1)
+			var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Percent Shown</td><td>Calls Shown</td><td>Total Calls</td></tr>");
+			var summary_stats = _.template($("#stat-header-template").html(), {
+				total_shown : num_displayed,
+				total : total_incidents,
+				shown_percentage : (num_displayed / total_incidents * 100).toFixed(1)
 			});
-			$list.prepend($("<tr class='stat' >").html(stat_header));
-			while($list.children().length > 10){
-				$list.children("tr:last-child").remove();
+			$list.prepend($("<tr id='totals' >").html(summary_stats));
+			$list.prepend($stats_header);
+			while ($list.find("tr").length > 15) {
+				$list.find("tr").last().remove();
 			}
+			 
+		};
+
+		var toggle_animation = function() {
+			console.log("toggle animation");
+			var id = $(this).attr("id");
+			var hovered = false;
+			_.each(all_categories, function(category){
+				if(category.id == id){
+					hovered = category;
+				}		
+			});
+			if(!hovered){
+				console.log("error finding category");
+				return;
+			}
+			_.each(hovered.displayed, function(incident) {
+				console.log("incident", incident);
+				if (incident.marker.getAnimation() != null) {
+					incident.marker.setAnimation(null);
+				} else {
+					incident.marker.setAnimation(google.maps.Animation.BOUNCE);
+				}
+			});
 		};
 
 	}(this));

@@ -9,20 +9,26 @@
 		<div id="content" >
 			<div id="map" ></div>
 			<div id="stats" >
+				<div id="icon-keys" >
+					<span class="key" ><img src="http://www.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png" /></span><span class="key" >Last 24 Hours</span>
+					<span class="key" ><img src="http://www.google.com/intl/en_us/mapfiles/ms/micons/yellow-dot.png" /></span><span class="key" >Last Week</span>
+					<span class="key" ><img src="http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png" /></span><span class="key last" >Past Last Week</span>
+				</div>
 				<table id="stats-list" border="0" ></table>
 			</div>
 		</div>
 	</body>
 	<script type="text/template" id="stat-template" >
 		<td><div class="stat-description" ><%= description %></div></td>
-		<td><div class="stat-percentage" ><%= percentage %>%</div></td>
-		<td><div class="stat-displayed-num" ><%= num_displayed %></div></td>
-		<td><div class="stat-total-num" ><%= num_total %></div></td>
+		<td><div class="stat-percentage number" ><%= percentage %>%</div></td>
+		<td><div class="stat-displayed-num number" ><%= num_displayed %></div></td>
+		<td><div class="stat-total-num number" ><%= num_total %></div></td>
 	</script>
 	<script type="text/template" id="stat-header-template" >
-		<td><div id="stat-total-shown" ><%= total_shown %></div></td>
-		<td><div id="stat-total" ><%= total %></div></td>
-		<td><div id="stat-shown-percentage" ><%= shown_percentage %>%</div></td>
+		<td><div id="header-label" >Total</div></td>
+		<td><div id="stat-shown-percentage" class="number" ></strong><%= shown_percentage %>%</div></td>
+		<td><div id="stat-total-shown " class="number" ><%= total_shown %></div></td>
+		<td><div id="stat-total" class="number" ><%= total %></div></td>
 	</script>
 	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" ></script>
