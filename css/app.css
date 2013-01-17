@@ -64,11 +64,12 @@ body{
 .stat{
 	color: #444;
 	font-size: 12px;
-	border-top: 2px solid #777777;
+	font-weight: 500;
+	border-top: 1px solid #777777;
 }
 
 .stat td{
-	padding: 4px;
+	padding: 5px;
 }
 
 .rounded{
@@ -80,7 +81,7 @@ body{
 
 .stat:hover{
 	cursor: pointer;
-	background: #F9F9F9;
+	background: #FDFDFD;
 }
 
 .key img{
