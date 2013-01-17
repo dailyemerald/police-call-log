@@ -12,15 +12,15 @@
 				<div id="icon-keys" >
 					<span class="key" ><img src="http://dailyemerald.github.com/police-call-log/icons/green-icon.png" /></span><span class="key" >0 - 24 Hours</span>
 					<span class="key" ><img src="http://dailyemerald.github.com/police-call-log/icons/yellow-icon.png" /></span><span class="key" >1 - 7 Days</span>
-					<span class="key" ><img src="http://dailyemerald.github.com/police-call-log/icons/gray-icon.png" /></span><span class="key last" >More Than 7 Days</span>
+					<span class="key" ><img src="http://dailyemerald.github.com/police-call-log/icons/gray-icon.png" /></span><span class="key last" >+7 Days</span>
 				</div>
-				<table id="stats-list" border="0" ></table>
+				<table id="stats-table" border="0" width="250" ><col width="175" ><col width="75" ></table>
 			</div>
 		</div>
 	</body>
 	<script type="text/template" id="stat-template" >
-		<td><div class="stat-description" ><%= description %></div></td>
-		<td><div class="stat-displayed-num number" ><%= num_displayed %></div></td>
+		<td class="stat-description" ><%= description %></td>
+		<td class="stat-displayed-num number" ><%= num_displayed %></td>
 	</script>
 	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" ></script>

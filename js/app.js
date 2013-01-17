@@ -159,7 +159,8 @@
 		categories = _.sortBy(categories, function(category) {
 			return category.displayed_percentage;
 		});
-		var $list = $("#stats-list"), num_displayed = 0;
+		var $list = $("#stats-table"), num_displayed = 0;
+		var cols = [$("<col width='75' >"), $("<col width='175' >")]; // god I hate tables
 		$list.html("");
 		_.each(categories, function(category, index, list) {
 			num_displayed += category.displayed.length;
@@ -179,12 +180,15 @@
 			$list.prepend($curr); // underscore sorts ascending
 		});
 		// create summary stats for map viewport
-		var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Calls Shown</td></tr>");
-		$list.prepend($("<tr id='totals' class='stat rounded' >").html(summary_stats));
+		var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Calls</td></tr>");
+		$list.prepend($stats_header);
+		_.each(cols, function(col){ $list.prepend(col); });
 		while($list.find("tr").length > 20) {
 			$list.find("tr").last().remove();
 		}
 	};
+	
+	// border-bottom, fixed width
 	
 	var toggle_highlights = function() {
 		var id = $(this).attr("id");

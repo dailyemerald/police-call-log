@@ -12,7 +12,7 @@ body{
 }
 
 #map{
-	width: 800px;
+	width: 840px;
 	height: 100%;
 	margin: 0 10px 0 0;
 	float: left;
@@ -20,24 +20,26 @@ body{
 
 #stats{
 	float: right;
-	width: 290px;
+	width: 250px;
 	height: 100%;
 	margin: 0;
 }
 
-#stats-list{
+#stats-table{
+	table-layout: fixed;
 	border-collapse: collapse;
 }
 
 .number{
-	text-align: center;
+	
 }
 
 #stat-header{
-	color: #555;
+	color: #444;
 	font-weight: bold;
-	font-size: 13px;
+	font-size: 14px;
 }
+
 
 #icon-keys{
 	width: 100%;
@@ -50,8 +52,9 @@ body{
 
 .key{
 	float: left;
-	color: #555;
-	margin-right: 3px;
+	color: #444;
+	margin-right: 5px;
+	padding-bottom: 3px;
 }
 
 .last{
@@ -59,10 +62,9 @@ body{
 }
 
 .stat{
-	color: #555;
-	width: 100%;
-	border: 0;
-	font-size: 13px;
+	color: #444;
+	font-size: 12px;
+	border-top: 2px solid #777777;
 }
 
 .stat td{
@@ -78,12 +80,13 @@ body{
 
 .stat:hover{
 	cursor: pointer;
-	background: #FAFAFA;
+	background: #F9F9F9;
 }
 
 .key img{
-	height: 15px;
+	height: 10px;
 }
+
 
 
 
