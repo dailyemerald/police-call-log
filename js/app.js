@@ -166,9 +166,7 @@
 			var $curr = $("<tr class='stat rounded' id='" + category.id + "' >");
 			var stat = _.template($("#stat-template").html(), {
 				description : category.description,
-				percentage : (category.displayed_percentage * 100).toFixed(1),
 				num_displayed : category.displayed.length,
-				num_total : category.incidents.length,
 			});
 			$curr.html(stat);
 			if(index % 2 == 1) {
@@ -181,14 +179,8 @@
 			$list.prepend($curr); // underscore sorts ascending
 		});
 		// create summary stats for map viewport
-		var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Percent Shown</td><td>Calls Shown</td><td>Total Calls</td></tr>");
-		var summary_stats = _.template($("#stat-header-template").html(), {
-			total_shown : num_displayed,
-			total : total_incidents,
-			shown_percentage : (num_displayed / total_incidents * 100).toFixed(1)
-		});
+		var $stats_header = $("<tr id='stat-header' ><td>Description</td><td>Calls Shown</td></tr>");
 		$list.prepend($("<tr id='totals' class='stat rounded' >").html(summary_stats));
-		$list.prepend($stats_header);
 		while($list.find("tr").length > 20) {
 			$list.find("tr").last().remove();
 		}
