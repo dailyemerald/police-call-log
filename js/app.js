@@ -51,13 +51,10 @@
 			refresh();
 		});
 		window.icons = {
-			blue: "http://s3.amazonaws.com/emg-data/police-call-log/img/blue-icon.png",
-			green: "http://s3.amazonaws.com/emg-data/police-call-log/img/green-icon.png",
-			black: "http://s3.amazonaws.com/emg-data/police-call-log/img/black-icon.png",
-			yellow: "http://s3.amazonaws.com/emg-data/police-call-log/img/yellow-icon.png",
-			light_gray: "http://s3.amazonaws.com/emg-data/police-call-log/img/light-gray-icon.png",
-			dark_gray: "http://s3.amazonaws.com/emg-data/police-call-log/img/dark-gray-icon.png",
-			red: "http://s3.amazonaws.com/emg-data/police-call-log/img/red-icon.png"
+			green: "http://dailyemerald.github.com/police-call-log/icons/green-icon.png",
+			yellow: "http://dailyemerald.github.com/police-call-log/icons/yellow-icon.png",
+			gray: "http://dailyemerald.github.com/police-call-log/icons/gray-icon.png",
+			red: "http://dailyemerald.github.com/police-call-log/icons/red-icon.png"
 		}
 	};
 	
@@ -90,11 +87,11 @@
 				window.infowindow.open(window.map, this);
 			});
 			if(incident.recency == 0) {
-				incident.marker.setIcon(icons.red);
+				incident.marker.setIcon(icons.green);
 			} else if(incident.recency == 1) {
 				incident.marker.setIcon(icons.yellow);
 			} else {
-				incident.marker.setIcon(icons.light_gray);
+				incident.marker.setIcon(icons.gray);
 			}
 			if(all_categories[incident.incident_description]) {
 				var category = all_categories[incident.incident_description];
@@ -210,16 +207,16 @@
 			if(incident.highlighted){
 				// back to normal
 				if(incident.recency == 0){
-					incident.marker.setIcon(icons.red);
+					incident.marker.setIcon(icons.green);
 				}else if(incident.recency == 1){
 					incident.marker.setIcon(icons.yellow);
 				}else{
-					incident.marker.setIcon(icons.light_gray);
+					incident.marker.setIcon(icons.gray);
 				}
 				incident.highlighted = false;
 			}else{
 				// highlight
-				incident.marker.setIcon(icons.green);
+				incident.marker.setIcon(icons.red);
 				incident.highlighted = true;
 			}
 
