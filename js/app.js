@@ -59,7 +59,6 @@
 	};
 	
 	var get_whitelist = function(data) {
-		data = JSON.parse(data.serialized);
 		window.incidents = data;
 		Tabletop.init({
 			key : whitelist_key,
