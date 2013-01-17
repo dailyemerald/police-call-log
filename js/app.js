@@ -3,7 +3,7 @@
 	// TODO rewrite this whole thing w/ emberjs, it's getting too complex
 	$(document).ready(function() {
 		start_spinner();
-		window.data_url = "http://crime.dailyemerald.com/incidents.json";
+		window.data_url = "http://crime.dailyemerald.com/incidents_cache.json";
 		window.whitelist_key = "0AvYMScvV9vpcdC1lMWhvV2x4ZE5jRFF4NGJvcjh6bGc";
 		setup_map();
 		$.ajax({
@@ -59,6 +59,7 @@
 	};
 	
 	var get_whitelist = function(data) {
+		data = JSON.parse(data.serialized);
 		window.incidents = data;
 		Tabletop.init({
 			key : whitelist_key,
